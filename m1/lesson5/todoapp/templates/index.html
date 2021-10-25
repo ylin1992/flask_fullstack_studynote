@@ -11,8 +11,17 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <style>
+            .hidden {
+                display: none;
+            }
+        </style>
     </head>
     <body>
+        <div id='error-message' class='hidden'>
+            <h3>Something went wrong!</h3>
+        </div>
+
         <form id='todoform'>
             <div>
                 <label for='description'>Create a Todo Item</label>
@@ -52,9 +61,11 @@
                     const liItem = document.createElement('LI');
                     liItem.innerHTML = jsonResponse['description'];
                     document.getElementById('todos').appendChild(liItem);
+                    document.getElementById('error-message').className='hidden';
                 })
                 .catch( function(e) {
                     console.log(e);
+                    document.getElementById('error-message').className='';
                 })
             }
         </script>
