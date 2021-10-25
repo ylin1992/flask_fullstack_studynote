@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-        <form action='/todos/create' method='post' id='todoform'>
+        <form id='todoform'>
             <div>
                 <label for='description'>Create a Todo Item</label>
                 <input type='text' id='description' name='description'/>
@@ -21,10 +21,42 @@
             <div>
         </form>
 
-        <ul>
+        <ul id='todos'>
         {% for d in data %}
             <li>{{ d.description }}</li>
         {% endfor %}
         </ul>
+
+        <script>
+            document.getElementById('todoform').onsubmit = function(e) {
+                e.preventDefault();
+                fetch('/todos/create', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        'description': document.getElementById('description').value
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                // fecth response from python backend
+                .then( function (res) {
+                    return res.json();
+                })
+                .then( function (jsonResponse) {
+                    console.log(jsonResponse)
+                    // if the data is recieved, append it to the list
+                    // if we marked the below lines off
+                    // when we add something, the data could be appended to database
+                    // but the added item will not show up until we refresh the page
+                    const liItem = document.createElement('LI');
+                    liItem.innerHTML = jsonResponse['description'];
+                    document.getElementById('todos').appendChild(liItem);
+                })
+                .catch( function(e) {
+                    console.log(e);
+                })
+            }
+        </script>
     </body>
 </html>

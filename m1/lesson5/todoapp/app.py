@@ -1,4 +1,5 @@
 from flask import Flask, request, url_for
+from flask.json import jsonify
 from flask.templating import render_template
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import redirect
@@ -24,12 +25,16 @@ def index():
 
 @app.route('/todos/create', methods=['POST'])
 def create():
-    item = request.form.get('description', '') # the second parameter is the default value if nothing returns
+    #item = request.form.get('description', '') # the second parameter is the default value if nothing returns
+    item = request.get_json()['description']
     print(item)
     print(type(item))
-    db.session.add(Todo(description=item))
+    todo = Todo(description=item)
+    db.session.add(todo)
     db.session.commit()
-    return redirect(url_for('index'))
+    return jsonify({
+        'description': todo.description
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
